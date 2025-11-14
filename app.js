@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const mongoose = require('mongoose'); 
 
 const app = express();
 
@@ -12,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-//  Rotas
+// Rotas
 const routes = require('./src/routes/index');
 const usuarioRoutes = require('./src/routes/usuarioRoutes');
 const authRoutes = require('./src/routes/authRoutes');
@@ -21,7 +22,7 @@ const tarefaRoutes = require('./src/routes/tarefaRoutes');
 //middleware de rotas
 app.use('/api', routes);
 app.use('/api/usuarios', usuarioRoutes);
-app.use('/api/auth', authRoutes);	
-//app.use('/api/tarefas', tarefaRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/tarefas', tarefaRoutes);
 
 module.exports = app;

@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 // Criar nova tarefa
 async function criarTarefa(req, res) {
   try {
-    console.log('Usuário autenticado:', req.usuario);
-    const { titulo, descricao, status } = req.body;
+    const { titulo, descricao, status, responsavel } = req.body;
     
     if (!titulo || titulo.trim() === '') {
       return res.status(400).json({ error: 'Título é obrigatório' });
@@ -15,6 +14,7 @@ async function criarTarefa(req, res) {
       titulo: titulo.trim(),
       descricao: descricao || '',
       status: status || 'pendente',
+      responsavel: responsavel || '',
       usuario: req.usuario.id
     });
 
@@ -29,7 +29,6 @@ async function criarTarefa(req, res) {
 // Listar todas as tarefas do usuário
 async function listarTarefas(req, res) {
   try {
-    console.log('Usuário autenticado:', req.usuario);
     const tarefas = await Tarefa.find({ usuario: req.usuario.id });
     res.status(200).json(tarefas);
   } catch (error) {
@@ -41,7 +40,6 @@ async function listarTarefas(req, res) {
 // Buscar tarefa por ID
 async function buscarTarefa(req, res) {
   try {
-    console.log('Usuário autenticado:', req.usuario);
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -64,9 +62,8 @@ async function buscarTarefa(req, res) {
 // Atualizar tarefa
 async function atualizarTarefa(req, res) {
   try {
-    console.log('Usuário autenticado:', req.usuario);
     const { id } = req.params;
-    const { titulo, descricao, status } = req.body;
+    const { titulo, descricao, status, responsavel } = req.body;
 
     if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).json({ error: 'ID inválido' });
@@ -81,6 +78,7 @@ async function atualizarTarefa(req, res) {
     if (titulo) tarefa.titulo = titulo;
     if (descricao) tarefa.descricao = descricao;
     if (status) tarefa.status = status;
+    if (responsavel !== undefined) tarefa.responsavel = responsavel;
 
     await tarefa.save();
     res.status(200).json(tarefa);
@@ -90,10 +88,9 @@ async function atualizarTarefa(req, res) {
   }
 }
 
- // Deletar tarefa 
+// Deletar tarefa 
 async function deletarTarefa(req, res) {
   try {
-    console.log('Usuário autenticado:', req.usuario);
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -116,6 +113,10 @@ async function deletarTarefa(req, res) {
   }
 }
 
-module.exports = { criarTarefa,  listarTarefas,  buscarTarefa,  atualizarTarefa,  deletarTarefa };
-
-
+module.exports = { 
+  criarTarefa, 
+  listarTarefas, 
+  buscarTarefa, 
+  atualizarTarefa, 
+  deletarTarefa 
+};
